@@ -9,7 +9,7 @@ import (
 )
 import myData "owerwatch-heroes/data"
 
-func AllHeroes(w http.ResponseWriter, r *http.Request){
+func AllHeroes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	response, err := http.Get("https://overwatch-api.net/api/v1/hero/")
 	if err != nil {
@@ -18,12 +18,12 @@ func AllHeroes(w http.ResponseWriter, r *http.Request){
 		data, _ := ioutil.ReadAll(response.Body)
 		fmt.Println(string(data))
 		var response myData.HeroesResponse
-		json.Unmarshal(data, &response);
+		json.Unmarshal(data, &response)
 		json.NewEncoder(w).Encode(response)
 	}
 }
 
-func OneHero(w http.ResponseWriter, r *http.Request){
+func OneHero(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 	w.Header().Set("Content-Type", "application/json")
@@ -34,7 +34,23 @@ func OneHero(w http.ResponseWriter, r *http.Request){
 		data, _ := ioutil.ReadAll(response.Body)
 		fmt.Println(string(data))
 		var response myData.HeroResponse
-		json.Unmarshal(data, &response);
+		json.Unmarshal(data, &response)
 		json.NewEncoder(w).Encode(response)
+	}
+}
+
+func HeroAbilities(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	w.Header().Set("Content-Type", "application/json")
+	response, err := http.Get("https://overwatch-api.net/api/v1/hero/" + id)
+	if err != nil {
+		fmt.Printf("The HTTP request failed with error %s\n", err)
+	} else {
+		data, _ := ioutil.ReadAll(response.Body)
+		fmt.Println(string(data))
+		var response myData.HeroResponse
+		json.Unmarshal(data, &response)
+		json.NewEncoder(w).Encode(response.Abilities)
 	}
 }
